@@ -1,0 +1,6 @@
+{
+  "name": "GP Studio Pretoria",
+  "description": "High-impact academic, resume, business plan, and social media media document structuring services with real-time AI-guided drafting and optimization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
