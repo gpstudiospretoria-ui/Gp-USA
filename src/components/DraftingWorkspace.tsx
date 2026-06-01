@@ -84,12 +84,25 @@ export function DraftingWorkspace({ initialServiceId }: DraftingWorkspaceProps) 
         })
       });
 
+      const responseText = await response.text();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to generate your blueprint draft.");
+        let errMsg = "Failed to generate your blueprint draft.";
+        try {
+          const errorData = JSON.parse(responseText);
+          errMsg = errorData.error || errMsg;
+        } catch {
+          // If response is HTML, strip tags or just use the response text up to a safe length
+          if (responseText.includes("<!DOCTYPE") || responseText.includes("<html")) {
+            errMsg = `Server returned an HTML error page. This usually signifies that the server encountered a critical configuration issue or is missing API keys.`;
+          } else {
+            errMsg = responseText.substring(0, 200) || errMsg;
+          }
+        }
+        throw new Error(errMsg);
       }
 
-      const data: GenerationResult = await response.json();
+      const data: GenerationResult = JSON.parse(responseText);
       setDraftResult(data);
     } catch (err: any) {
       console.error(err);

@@ -248,7 +248,21 @@ Detail sections for Introduction (with thesis placement), Body Argument 1, Body 
       return res.status(500).json({ error: "Empty draft returned from standard AI generator." });
     }
 
-    const draftData = JSON.parse(response.text);
+    let cleanText = response.text.trim();
+    // Safely remove any markdown styling block indicators (```json ... ```)
+    if (cleanText.startsWith("```")) {
+      cleanText = cleanText.replace(/^```(json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+    }
+
+    let draftData;
+    try {
+      draftData = JSON.parse(cleanText);
+    } catch (parseErr: any) {
+      console.error("[JSON Parser Error]: Non-JSON text received from Gemini. Raw text:", response.text);
+      return res.status(500).json({
+        error: `Failed to compile strategic format layout. Cleaned raw output: ${cleanText.substring(0, 150)}...`
+      });
+    }
 
     // Asynchronously email the compiled draft to gpstudiospretoria@gmail.com
     sendDraftEmail(serviceId, fields, draftData).catch((err) => {
