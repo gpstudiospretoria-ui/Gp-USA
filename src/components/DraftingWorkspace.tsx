@@ -522,7 +522,24 @@ export function DraftingWorkspace({ initialServiceId }: DraftingWorkspaceProps) 
                   </div>
                 ) : draftResult ? (
                   /* High Fidelity Document Visual Rendering */
-                  <div className="space-y-8 animate-fadeIn text-left">
+                  <a 
+                    href={
+                      activeTab === 'resume' ? 'https://gpstudiospretoria.gumroad.com/l/Resume_and_cover_usa' :
+                      activeTab === 'social' ? 'https://gpstudiospretoria.gumroad.com/l/10_post_social_usa' :
+                      activeTab === 'business' ? 'https://gpstudiospretoria.gumroad.com/l/1_page_USA' :
+                      'https://gpstudiospretoria.gumroad.com/l/aresy'
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block space-y-8 animate-fadeIn text-left cursor-pointer group/canvas relative hover:opacity-95 transition-all duration-300 decoration-none"
+                    title="Click here to purchase the fully formatted production version on Gumroad!"
+                  >
+                    {/* Floating hint banner overlay */}
+                    <div className="absolute top-1 right-2 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-full flex items-center space-x-1.5 text-[9px] font-bold uppercase tracking-wider text-emerald-300 shadow-lg animate-pulse z-25">
+                      <Sparkles className="h-3 w-3 text-emerald-400" />
+                      <span>UNLOCK PRODUCTION OPTIMIZED TEMPLATE</span>
+                    </div>
+
                     <div className="border-b border-white/10 pb-1.5 flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                       <h3 className="text-xl font-bold tracking-tight text-white leading-tight">
                         {draftResult.title}
@@ -531,26 +548,19 @@ export function DraftingWorkspace({ initialServiceId }: DraftingWorkspaceProps) 
                         Pretoria Optimized
                       </span>
                     </div>
+                    
+                    <div className="text-[11px] font-semibold text-slate-400 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl flex items-center justify-between">
+                      <span className="uppercase tracking-widest text-[9px] text-emerald-400">★ Direct Checkout Connection Active</span>
+                      <span className="text-white hover:underline uppercase text-[9px] font-bold">CLICK PREVIEW TO SECURE EXPORT &rarr;</span>
+                    </div>
 
                     <div className="space-y-6">
                       {draftResult.structure.map((section, idx) => (
-                        <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl relative group/sec hover:border-white/20 transition-all duration-300">
+                        <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl relative transition-all duration-300 hover:border-white/20">
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="text-xs font-extrabold tracking-widest uppercase text-white">
                               {section.sectionName}
                             </h4>
-                            <button
-                              id={`btn-copy-sec-${idx}`}
-                              onClick={() => handleCopyToClipboard(`${section.sectionName}\n${section.content}\n${section.bulletPoints?.join("\n") || ""}`, idx)}
-                              className="text-slate-500 hover:text-white transition-colors cursor-pointer"
-                              title="Copy section data"
-                            >
-                              {copiedSectionIndex === idx ? (
-                                <span className="text-[10px] font-bold text-emerald-400">Copied!</span>
-                              ) : (
-                                <Copy className="h-3.5 w-3.5" />
-                              )}
-                            </button>
                           </div>
                           
                           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans m-0 font-light">
@@ -576,11 +586,11 @@ export function DraftingWorkspace({ initialServiceId }: DraftingWorkspaceProps) 
                       <span className="text-[10px] font-extrabold uppercase tracking-widest block text-emerald-300 mb-2">
                         GP Studio Pretoria Execution Briefing
                       </span>
-                      <p className="text-xs text-slate-350 leading-relaxed font-mono m-0 font-light">
+                      <p className="text-xs text-slate-350 leading-relaxed font-mono m-0 font-light text-slate-400">
                         {draftResult.strategicNotes}
                       </p>
                     </div>
-                  </div>
+                  </a>
                 ) : (
                   /* Idle Canvas Greeting Card with Pretoria context */
                   <div className="text-center py-16 text-slate-400 space-y-4 max-w-sm mx-auto">

@@ -75,8 +75,40 @@ export default function App() {
   const [selectedServiceId, setSelectedServiceId] = useState<ServiceId>('resume');
   const [showSeoHub, setShowSeoHub] = useState<boolean>(true);
   const [activeFaqId, setActiveFaqId] = useState<number | null>(null);
+  const [showCopyRestriction, setShowCopyRestriction] = useState<boolean>(false);
 
   const sandboxRef = useRef<HTMLDivElement>(null);
+
+  // Global listener to prevent copying/highlighting draft material on screens
+  React.useEffect(() => {
+    const handleMouseUp = () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 0) {
+        const activeEl = document.activeElement;
+        if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+          return;
+        }
+        setShowCopyRestriction(true);
+        selection.removeAllRanges(); // Clear highlighting immediately
+      }
+    };
+
+    const handleCopy = (e: ClipboardEvent) => {
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+        return;
+      }
+      e.preventDefault();
+      setShowCopyRestriction(true);
+    };
+
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('copy', handleCopy);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('copy', handleCopy);
+    };
+  }, []);
 
   // Scroll smoothly to Workspace and activate selected service tab
   const handleServiceSelect = (id: string) => {
@@ -358,7 +390,7 @@ export default function App() {
                 
                 <div className="prose prose-invert text-neutral-400 text-xs sm:text-sm leading-relaxed space-y-6">
                   <p>
-                    In both the hyper-competitive South African job market and the modern fundraising landscape, the margin for presentation error is exactly zero. Whether you are looking for a top-tier <strong className="text-neutral-200">professional resume writer in Pretoria</strong> to bypass automated screening, or searching for actionable <strong class="text-neutral-200">business plan templates in South Africa</strong> to lock down capital, the core underlying bottleneck remains identical: structured layout mechanics.
+                    In both the hyper-competitive South African job market and the modern fundraising landscape, the margin for presentation error is exactly zero. Whether you are looking for a top-tier <strong className="text-neutral-200">professional resume writer in Pretoria</strong> to bypass automated screening, or searching for actionable <strong className="text-neutral-200">business plan templates in South Africa</strong> to lock down capital, the core underlying bottleneck remains identical: structured layout mechanics.
                   </p>
                   
                   <h4 className="text-sm font-extrabold text-white tracking-tight uppercase pt-2">
@@ -372,14 +404,14 @@ export default function App() {
                     2. Structural Frameworks for Funding: The Power of a 1-Page Business Plan
                   </h4>
                   <p>
-                    When early-stage entrepreneurs approach a <strong class="text-neutral-200">business plan consultant in Gauteng</strong>, they frequently expect a dense, 50-page corporate manual. However, modern angels and venture funds prioritize clarity and rapid validation above all else. Utilizing a highly optimized, data-dense <strong className="text-neutral-200">1 page business plan for funding</strong> lets you communicate your value proposition, customer acquisition strategy, and unit economics under 30 seconds. If your initial presentation layout is disorganized, investors assume your operational execution will be similarly chaotic. High-velocity formatting ensures your financial milestones stand out clearly on the first pass.
+                    When early-stage entrepreneurs approach a <strong className="text-neutral-200">business plan consultant in Gauteng</strong>, they frequently expect a dense, 50-page corporate manual. However, modern angels and venture funds prioritize clarity and rapid validation above all else. Utilizing a highly optimized, data-dense <strong className="text-neutral-200">1 page business plan for funding</strong> lets you communicate your value proposition, customer acquisition strategy, and unit economics under 30 seconds. If your initial presentation layout is disorganized, investors assume your operational execution will be similarly chaotic. High-velocity formatting ensures your financial milestones stand out clearly on the first pass.
                   </p>
 
                   <h4 className="text-sm font-extrabold text-white tracking-tight uppercase pt-2">
                     3. Eliminating Academic Friction with Scalable Essay Outlines
                   </h4>
                   <p>
-                    For university students and postgraduate researchers throughout South Africa, academic friction rarely stems from a lack of research. Instead, it is almost always caused by a structural breakdown in argument logic. Implementing a meticulous <strong class="text-neutral-200">essay outline structure helper</strong> lets you lock down your thesis targets, core parameters, and source validations before typing a single sentence. Professional <strong class="text-neutral-200">academic document formatting services in South Africa</strong> consistently reveal that clean logical sequencing is the primary metric that moves a submission from a standard pass to an elite distinction grade.
+                    For university students and postgraduate researchers throughout South Africa, academic friction rarely stems from a lack of research. Instead, it is almost always caused by a structural breakdown in argument logic. Implementing a meticulous <strong className="text-neutral-200">essay outline structure helper</strong> lets you lock down your thesis targets, core parameters, and source validations before typing a single sentence. Professional <strong className="text-neutral-200">academic document formatting services in South Africa</strong> consistently reveal that clean logical sequencing is the primary metric that moves a submission from a standard pass to an elite distinction grade.
                   </p>
                   
                   <div className="mt-8 p-6 bg-neutral-900/30 border border-neutral-900 rounded-none text-xs">
@@ -419,6 +451,92 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* 11. GLOBAL COPY/SELECTION RESTRICTION SCREEN (GREY OUT) */}
+      {showCopyRestriction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#05070c]/90 min-h-screen backdrop-blur-xl animate-fadeIn">
+          {/* Decorative floating grids */}
+          <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="bg-white/5 border border-white/10 p-8 sm:p-10 max-w-lg w-full text-center rounded-[32px] shadow-2xl relative overflow-hidden backdrop-blur-2xl">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500" />
+            
+            <div className="inline-flex p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 rounded-2xl mb-6">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight uppercase mb-4 font-sans">
+              SANDBOX PROTECTION ACTIVE
+            </h3>
+            
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed mb-8 font-light font-sans">
+              Selecting, highlighting, or copying draft content is restricted in Sandbox mode. Elevate your document formatting now. Secure your production-optimized, recruiter-cleared template layout directly from the official checkout links below:
+            </p>
+
+            <div className="space-y-3 mb-8 text-left">
+              <a 
+                href="https://gpstudiospretoria.gumroad.com/l/Resume_and_cover_usa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-4 bg-white/5 border border-emerald-500/20 hover:border-emerald-500/50 hover:bg-white/10 rounded-xl transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="block text-[10px] font-bold tracking-widest text-emerald-400 uppercase">Resume Service</span>
+                  <span className="text-xs font-bold text-white uppercase sm:text-sm font-sans">ATS Resume + Cover Pack</span>
+                </div>
+                <span className="text-[10px] font-extrabold text-white bg-emerald-500/20 px-2.5 py-1 rounded border border-emerald-500/30 group-hover:bg-emerald-500 group-hover:text-black transition-all">$19</span>
+              </a>
+
+              <a 
+                href="https://gpstudiospretoria.gumroad.com/l/10_post_social_usa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-4 bg-white/5 border border-yellow-500/20 hover:border-yellow-500/50 hover:bg-white/10 rounded-xl transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="block text-[10px] font-bold tracking-widest text-yellow-400 uppercase">Social Media Service</span>
+                  <span className="text-xs font-bold text-white uppercase sm:text-sm font-sans">10-Post Social Media Pack</span>
+                </div>
+                <span className="text-[10px] font-extrabold text-white bg-yellow-500/20 px-2.5 py-1 rounded border border-yellow-500/30 group-hover:bg-yellow-500 group-hover:text-black transition-all">$24</span>
+              </a>
+
+              <a 
+                href="https://gpstudiospretoria.gumroad.com/l/1_page_USA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-4 bg-white/5 border border-orange-500/20 hover:border-orange-500/50 hover:bg-white/10 rounded-xl transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="block text-[10px] font-bold tracking-widest text-orange-400 uppercase">Venture Service</span>
+                  <span className="text-xs font-bold text-white uppercase sm:text-sm font-sans">1-Page Business Plan Draft</span>
+                </div>
+                <span className="text-[10px] font-extrabold text-white bg-orange-500/20 px-2.5 py-1 rounded border border-orange-500/30 group-hover:bg-orange-500 group-hover:text-black transition-all">$29</span>
+              </a>
+
+              <a 
+                href="https://gpstudiospretoria.gumroad.com/l/aresy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-4 bg-white/5 border border-purple-500/20 hover:border-purple-500/50 hover:bg-white/10 rounded-xl transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="block text-[10px] font-bold tracking-widest text-purple-400 uppercase">Academic Service</span>
+                  <span className="text-xs font-bold text-white uppercase sm:text-sm font-sans">Structured Essay Outline</span>
+                </div>
+                <span className="text-[10px] font-extrabold text-white bg-purple-500/20 px-2.5 py-1 rounded border border-purple-500/30 group-hover:bg-purple-500 group-hover:text-black transition-all">$9</span>
+              </a>
+            </div>
+
+            <button 
+              onClick={() => setShowCopyRestriction(false)}
+              className="w-full py-4 border border-white/10 hover:bg-white/5 text-slate-400 hover:text-white text-xs font-extrabold tracking-widest uppercase rounded-2xl cursor-pointer transition-all"
+            >
+              Close Alert & Return to Inputs
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
