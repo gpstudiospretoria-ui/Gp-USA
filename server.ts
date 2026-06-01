@@ -18,9 +18,9 @@ app.use(express.urlencoded({ extended: true }));
 let _aiClient: GoogleGenAI | null = null;
 function getGenAIClient(): GoogleGenAI {
   if (!_aiClient) {
-    const key = process.env.GEMINI_API_KEY;
+    const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (!key) {
-      throw new Error("GEMINI_API_KEY environment variable is not configured in Secrets.");
+      throw new Error("Neither GEMINI_API_KEY nor GOOGLE_API_KEY environment variable is configured in Secrets.");
     }
     _aiClient = new GoogleGenAI({
       apiKey: key,
